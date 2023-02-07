@@ -33,25 +33,26 @@ def unauthorized(error) -> str:
 def forbidden(error) -> str:
     """ Forbidden
     """
-    return jsonify({"error": "Forbidden"}), 401
+    return jsonify({"error": "Forbidden"}), 403
 
 
 @app.before_request
 def before():
     """Executes before requests"""
     if auth is None:
-        return
-    req_auth = auth.require_auth(request.path, ['/api/v1/status/',
-                                                '/api/v1/unauthorized/',
-                                                '/api/v1/forbidden/'])
-    if not req_auth:
         pass
-    head = auth.authorization_header(request)
-    if head is None:
-        abort(401)
-    cur_user = auth.current_user(request)
-    if cur_user is None:
-        abort(403)
+    else:
+        req_auth = auth.require_auth(request.path, ['/api/v1/status/',
+                                                    '/api/v1/unauthorized/',
+                                                    '/api/v1/forbidden/'])
+        if not req_auth:
+            pass
+        head = auth.authorization_header(request)
+        if head is None:
+            abort(401)
+        cur_user = auth.current_user(request)
+        if cur_user is None:
+            abort(403)
 
 
 if __name__ == "__main__":
