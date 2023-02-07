@@ -40,7 +40,7 @@ def forbidden(error) -> str:
 def before():
     """Executes before requests"""
     if auth is None:
-        pass
+        return
     req_auth = auth.require_auth(request.path, ['/api/v1/status/',
                                                 '/api/v1/unauthorized/',
                                                 '/api/v1/forbidden/'])
