@@ -40,9 +40,9 @@ class BasicAuth(Auth):
             -> Tuple[str, str]:
         """Extracts user's credentials"""
         if decoded_base64_authorization_header is None:
-            return None
+            return None, None
         if type(decoded_base64_authorization_header) is not str:
-            return None
+            return None, None
         if ':' not in decoded_base64_authorization_header:
-            return None
+            return None, None
         return tuple(decoded_base64_authorization_header.split(':'))
