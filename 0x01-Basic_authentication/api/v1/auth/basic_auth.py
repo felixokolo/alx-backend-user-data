@@ -59,8 +59,6 @@ class BasicAuth(Auth):
             return None
         if user_pwd is None:
             return None
-        if User.count() == 0:
-            return None
         users = User.search({'email': user_email})
         if len(users) == 0:
             return None
