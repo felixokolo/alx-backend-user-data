@@ -19,6 +19,8 @@ class Auth:
         if len(excluded_paths) == 0:
             return True
         for p in excluded_paths:
+            if p is None:
+                continue
             if '*' in p:
                 pos = p.find('*')
                 if p[:pos] == path[:pos]:
