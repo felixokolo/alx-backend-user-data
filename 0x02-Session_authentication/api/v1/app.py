@@ -44,13 +44,16 @@ def before():
     if auth is None:
         pass
     else:
-        req_auth = auth.require_auth(request.path, ['/api/v1/status/',
-                                                    '/api/v1/unauthorized/',
-                                                    '/api/v1/forbidden/'])
+        req_auth = auth.require_auth(request.path,
+                                     ['/api/v1/status/',
+                                      '/api/v1/unauthorized/',
+                                      '/api/v1/forbidden/',
+                                      '/api/v1/auth_session/login/'])
         if not req_auth:
             return
         head = auth.authorization_header(request)
-        if head is None:
+        cookie = auth.session_cookie(request)
+        if head is None and cookie is None:
             abort(401)
         cur_user = auth.current_user(request)
         if cur_user is None:
@@ -65,4 +68,7 @@ if __name__ == "__main__":
         auth = Auth()
     if getenv("AUTH_TYPE") == 'basic_auth':
         auth = BasicAuth()
+    if getenv("AUTH_TYPE") == 'session_auth':
+        from api.v1.auth.session_auth import SessionAuth
+        auth = SessionAuth()
     app.run(host=host, port=port)
