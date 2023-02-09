@@ -7,14 +7,18 @@ from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
 import os
-from api.v1.auth.basic_auth import BasicAuth
-from api.v1.auth.auth import Auth
 
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
-auth = BasicAuth()
+auth = None
+if getenv("AUTH_TYPE") == 'auth':
+    from api.v1.auth.auth import Auth
+    auth = Auth()
+if getenv("AUTH_TYPE") == 'basic_auth':
+    from api.v1.auth.basic_auth import BasicAuth
+    auth = BasicAuth()
 
 
 @app.errorhandler(404)
@@ -60,8 +64,4 @@ def before():
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
     port = getenv("API_PORT", "5000")
-    if getenv("AUTH_TYPE") == 'auth':
-        auth = Auth()
-    if getenv("AUTH_TYPE") == 'basic_auth':
-        auth = BasicAuth()
     app.run(host=host, port=port)
