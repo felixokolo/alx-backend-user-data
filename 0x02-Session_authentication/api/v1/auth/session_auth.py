@@ -36,3 +36,16 @@ class SessionAuth(Auth):
         user = User.get(user_id)
         print('gets here', user_id)
         return user
+
+    def destroy_session(self, request=None):
+        """Logout mechanism"""
+        if request is None:
+            return False
+        sessionID = self.session_cookie(request)
+        if sessionID is None:
+            return False
+        user = self.user_id_for_session_id(sessionID)
+        if user is None:
+            return False
+        del self.user_id_by_session_id[sessionID]
+        return True
