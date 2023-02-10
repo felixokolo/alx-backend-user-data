@@ -40,7 +40,7 @@ class SessionExpAuth(SessionAuth):
         if user.get('created_at') is None:
             return None
         created_at = user.get('created_at')
-        deltatime = timedelta(self.session_duration)
+        deltatime = timedelta(seconds=self.session_duration)
         expires_at = created_at + deltatime
         current_time = datetime.now()
         if current_time > expires_at:
