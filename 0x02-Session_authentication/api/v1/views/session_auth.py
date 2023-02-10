@@ -39,6 +39,7 @@ def session_auth() -> str:
     from api.v1.app import auth
     sessionID = auth.create_session(user.id)
     out = jsonify(user.to_json())
+    print(sessionID)
     out.set_cookie(os.getenv('SESSION_NAME'), sessionID)
     return out
 
