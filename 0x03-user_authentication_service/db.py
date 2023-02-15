@@ -43,6 +43,8 @@ class DB:
 
     def find_user_by(self, **kwargs):
         """finds a user based on input keywords"""
+        if kwargs is None:
+            raise InvalidRequestError
         cols = User.__dict__.keys()
         for x in kwargs:
             if x not in cols:
