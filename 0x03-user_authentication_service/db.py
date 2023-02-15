@@ -35,8 +35,9 @@ class DB:
         new_user = User()
         new_user.email = email
         new_user.hashed_password = hashed_password
+        self.__session.add(new_user)
         return new_user
 
     def find_user_by(self, **kwargs):
         """finds a user based on input keywords"""
-        self.__session.query(User).filter_by(**kwargs)
+        self._session.query(User).filter_by(**kwargs)
