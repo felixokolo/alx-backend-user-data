@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
-
 from user import Base, User
 
 
@@ -48,7 +47,7 @@ class DB:
         cols = User.__dict__.keys()
         ret = None
         for x in kwargs.keys():
-            if x not in cols:
+            if x not in cols or kwargs[x] is None:
                 raise(InvalidRequestError)
         try:
             ret = self._session.query(User).filter_by(**kwargs).first()
@@ -57,3 +56,19 @@ class DB:
         if ret is None:
             raise(NoResultFound)
         return ret
+
+    def update_user(self, user_id: int, **kwargs):
+        """Updates a user attribute"""
+        if kwargs is None:
+            raise ValueError
+        attr = {'id': user_id}
+        try:
+            user = self.find_user_by(**attr)
+        except(InvalidRequestError, NoResultFound):
+            raise ValueError
+        cols = User.__dict__.keys()
+        for x in kwargs.keys():
+            if x not in cols or kwargs[x] is None:
+                raise(ValueError)
+        for k, v in kwargs.items():
+            setattr(user, k, v)
