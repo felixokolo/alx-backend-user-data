@@ -46,10 +46,14 @@ class DB:
         if kwargs is None:
             raise InvalidRequestError
         cols = User.__dict__.keys()
+        ret = None
         for x in kwargs.keys():
             if x not in cols:
                 raise(InvalidRequestError)
-        ret = self._session.query(User).filter_by(**kwargs).all()
-        if len(ret) == 0:
+        try:
+            ret = self._session.query(User).filter_by(**kwargs).first()
+        except(InvalidRequestError):
+            raise InvalidRequestError
+        if ret is None:
             raise(NoResultFound)
-        return ret[0]
+        return ret
