@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.exc import NoResultFound
 
 from user import Base, User
 
@@ -35,9 +36,13 @@ class DB:
         new_user = User()
         new_user.email = email
         new_user.hashed_password = hashed_password
-        self._session().add(new_user)
+        self._session.add(new_user)
+        self._session.commit()
         return new_user
 
     def find_user_by(self, **kwargs):
         """finds a user based on input keywords"""
-        self._session.query(User).filter_by(**kwargs)
+        ret = self._session.query(User).filter_by(**kwargs).all()
+        if len(ret) == 0:
+            raise(NoResultFound)
+        return ret[0]
