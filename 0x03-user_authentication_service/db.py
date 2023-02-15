@@ -35,7 +35,7 @@ class DB:
         new_user = User()
         new_user.email = email
         new_user.hashed_password = hashed_password
-        self.__session.add(new_user)
+        self._session().add(new_user)
         return new_user
 
     def find_user_by(self, **kwargs):
