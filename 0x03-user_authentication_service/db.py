@@ -42,11 +42,11 @@ class DB:
 
     def find_user_by(self, **kwargs):
         """finds a user based on input keywords"""
-        cols = User.__dict__.keys()
-        for x in kwargs:
-            if x not in cols:
-                raise(InvalidRequestError)
-        ret = self._session.query(User).filter_by(**kwargs).all()
+        ret = []
+        try:
+            ret = self._session.query(User).filter_by(**kwargs).all()
+        except(InvalidRequestError):
+            raise(InvalidRequestError)
         if len(ret) == 0:
             raise(NoResultFound)
         return ret[0]
