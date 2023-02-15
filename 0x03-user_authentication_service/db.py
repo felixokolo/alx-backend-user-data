@@ -46,7 +46,7 @@ class DB:
         if kwargs is None:
             raise InvalidRequestError
         cols = User.__dict__.keys()
-        for x in kwargs:
+        for x in kwargs.keys():
             if x not in cols:
                 raise(InvalidRequestError)
         ret = self._session.query(User).filter_by(**kwargs).all()
