@@ -4,6 +4,8 @@ import bcrypt
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
+from uuid import uuid4
+from typing import Union
 
 
 def _hash_password(password: str):
@@ -36,3 +38,32 @@ class Auth():
             user
             return user
         raise ValueError("{} already exists".format(email))
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """Checks for credential validity"""
+        if email is None or password is None:
+            return False
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return False
+        ret = bcrypt.checkpw(password.encode(), user.hashed_password)
+        if ret:
+            return True
+        return False
+
+    def _generate_uuid(self) -> str:
+        """Generates UUID"""
+        return str(uuid4())
+
+    def create_session(self, email: str) -> Union[str, None]:
+        """Associates a session ID to a user"""
+        if email is None:
+            return
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return
+        session_id = self._generate_uuid()
+        self._db.update_user(user.id, session_id=session_id)
+        return session_id
